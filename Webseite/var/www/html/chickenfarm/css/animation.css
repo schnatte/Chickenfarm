@@ -1,0 +1,21 @@
+
+/* = = = = = = = = = = = = = = = = = datei animation.css = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+/* diese datei regelt die css-animationen  */
+
+
+
+
+/* ############################################################ */
+/* Animation | drehen  */
+/* ############################################################ */
+
+.drehen {
+transition: all .8s ;
+}
+
+.drehen:hover {
+transform:rotate(1080deg);
+}
+
+

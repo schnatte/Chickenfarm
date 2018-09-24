@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName "Please enter your password"
+AuthUserFile .htpasswd
+AuthGroupFile /dev/null 
+require valid-user
+ErrorDocument 401 /error_pages/401.html

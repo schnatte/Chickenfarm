@@ -1,0 +1,123 @@
+/* = = = = = = = = = = = = = = = = = datei menue.css = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+
+/* ############################################################ */
+/* diese datei enthält das hauptmenü */
+/* alle anderen menüs sowie auch allgemeine links im text bzw. eventuelle "weiter-Links"
+sind in der datei "format.css" direkt beim jeweiligen abschnitt  definiert */
+/* ############################################################ */
+
+
+/* = = = = = = = = = = = = = = = = = MENÜ 1 = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+
+/* - - - - - MENU FORMATIERUNG - - - - - */
+
+#menu1 {width :100%;
+margin:0;background:rgba(40,94,140,.3);
+}
+
+#menu1 ul {display:inline-block;
+text-align:center;
+margin:0;
+padding:0;width:100%
+}
+
+#menu1 li {list-style-type : none;
+margin:0rem;
+padding:0 0rem 0 0;
+}
+
+
+#menu1 li a {display:block;
+text-align:left;
+text-decoration : none;
+font-size:1.4rem;
+letter-spacing:.1rem;
+padding:.4rem 1rem .4rem 1rem ;
+margin: 0;
+color:#fff  ;
+}
+
+
+
+/* - - - - - TOGGLE-FUNKTION (MENÜ AN UND AUS) MIT CHECKBOX-HACK - - - - - */
+
+/* menü-schalter formatierung */
+label {display:inline-block;
+color:#fff;
+background:#A42629;
+cursor:pointer;
+padding:.5rem 1rem .5rem .6rem;
+margin-bottom:1rem;
+}
+
+/* menu unsichtbar */
+#menu1 {visibility:hidden;
+transition:all 2s;opacity:0;
+}
+
+/* checkbox versteckt */
+input[type=checkbox]{
+display: none;
+}
+
+/* schaltet menu ein */
+input[type=checkbox]:checked ~ #menu1  {
+visibility:visible;opacity:1
+}
+
+
+
+
+/* ############################################################ */
+/* M E D I A   Q U E R I E S - BILDSCHIRMABFRAGEN für das Menü*/
+/* ############################################################ */
+
+/* ==================================== ab 480 pixel ================================== */
+@media (min-width: 480px) {
+
+#menu1 li a {
+width:30rem;
+}
+
+}
+
+/* ==================================== ab 768 pixel ================================== */
+@media (min-width: 768px) {
+
+#menu1  {
+background:transparent;
+}
+
+#menu1 li a {
+width:100%;
+}
+
+#menu1 li a:hover {
+color:#A42629;
+}
+
+#menu1  #aktuell  a  {
+color:#fff;
+background:rgba(255,255,255,.4);
+}
+
+
+/* menu-schalter unsichtbar */
+label{
+display: none;
+}
+
+/* menu sichtbar */
+#menu1 {
+visibility:visible;opacity:1
+}
+
+
+}
+
+
+
+
+/* = = = = = = = = = = = = = = = = = = = = = Code Ende = = = = = = = = = = = = = = = = = = = = = */

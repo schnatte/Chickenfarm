@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="robots" content="INDEX,FOLLOW">
+<meta name="page-type" content=" homepage">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords"
+content="homepage,dokument,webpage,page,web,netz,homepage dokument webpage page web netz">
+<meta name="description"
+content="homepage, dokument, webpage, page, web, netz" >
+<title>Chickenfarm</title>
+
+
+<!-- /////////////////// Copyright-Vermerk /////////////////// -->
+<!-- Der nachfolgende einzeilige Copyright-Vermerk (c) ist nicht zu l�schen.-->
+<!-- (c)Copyright by S.I.S.Papenburg / www.on-mouseover.de/templates/ -->
+<!--Ein Entfernen dieses Copyright/Urheberrecht-Vermerks kann rechtliche Schritte nach sich ziehen -->
+<!-- ////////////////////////////////////// -->
+<link href="../images/chicken.ico" rel="shortcut Icon"/>
+<link rel="stylesheet" href="css/menue.css" type="text/css">
+<link rel="stylesheet" href="css/format.css" type="text/css">
+<link rel="stylesheet" href="css/animation.css" type="text/css">
+<link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+<link rel="stylesheet" href="css/font-roboto-light.css" type="text/css">
+<link rel="stylesheet" href="css/font-open-sans-light.css" type="text/css">
+
+
+<!-- /////////////////// BROWSERWEICHE  - Conditional Comments f�r Internet Explorer Vers. 8 und tiefer /////////////////// -->
+<!-- ========== alte IE-Versionen unterhalb Version 9 - lt=lower than IE9 ========== -->
+<!--[if lt IE 9]>
+   <link href="css/hinweis-alte-ie.css" rel="stylesheet" type="text/css"/>
+<![endif]-->
+
+<!--Google Charts implementierung -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	google.charts.load("current", {packages:["map"]});
+	google.charts.setOnLoadCallback(drawChart);
+	function drawChart() {
+		var data = google.visualization.arrayToDataTable([
+		['Lat', 'Long', 'Name'],
+		[48.822805, 7.966643, 'Standort']
+		]);
+
+		var options = {
+		mapType: 'normal',
+		zoomLevel: 12,
+		showTooltip: true,
+		showInfoWindow: true,
+		useMapTypeControl: true,
+			icons: {
+				default: {
+				normal: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Azure-icon.png',
+				selected: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Right-Azure-icon.png'
+				}
+			}
+		};
+		var map = new google.visualization.Map(document.getElementById('map_markers_div'));
+		map.draw(data, options);
+	}
+//--Textfile for runtime  -->
+$(document).ready(function(){
+	$('#runtime').load('../tmp/runtime.txt');
+});
+</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<!-- <script type="text/javascript" src="java/jquery.csv.js"></script> -->
+<script type="text/javascript">
+//--Pie for In Out   -->
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+function drawChart() {
+	var data = google.visualization.arrayToDataTable([
+	['Typ', 'Count Chicken'],
+	['In',     3],
+	['Out',    2]
+	]);
+
+	var options = {
+		title: 'Aufenthalt',
+		is3D: true,
+		backgroundColor: 'transparent'
+	};
+
+	var chart = new google.visualization.PieChart(document.getElementById('InOutPie_3D'));
+	chart.draw(data, options);
+};
+</script>
+</head>
+
+
+<body>
+
+<div class="container_haupt" id="top">
+<div class="wrapper">
+
+
+<!-- ============================== HAUPTBEREICH ============================== -->
+
+<!-- ############################################################ -->
+<!-- kopf bereich -->
+<!-- ############################################################ -->
+
+<div class="kopf-main">
+<div class="kopf">
+
+<div class="kopfbox-1a"><span class="name"> Chickenfarm</span></div>
+<div class="kopfbox-1b icon-liste">
+<ul>
+<li><a href="index.html" title="Social Media"><i class="fa fa-facebook drehen" ></i></a></li>
+<li><a href="index.html" title="Social Media"><i class="fa fa-twitter drehen"></i></a></li>
+<li><a href="index.html" title="Social Media"><i class="fa fa-youtube drehen" ></i></a></li>
+<li><a href="index.html" title="Social Media"><i class="fa fa-instagram drehen" ></i></a></li>
+</ul>
+</div>
+
+</div>
+</div>
+
+
+<!-- ############################################################ -->
+<!-- logo bereich -->
+<!-- ############################################################ -->
+
+<div class="logo-main">
+<div class="logo">
+
+<div class="logobox-1a"></div>
+<div class="logobox-1b">
+<!-- = = = = = nav bereich = = = = =  -->
+<input type="checkbox" id="checkbox_toggle">
+<span class="seitentitel"><i class="fa fa-file-o" ></i> Bewohner</span><label for="checkbox_toggle"><i class="fa fa-navicon drehen" ></i> Men&uuml;</label>
+<!-- Men� -->
+<div id="menu1">
+<ul>
+<li><a  href="index.html">Home</a></li>
+<li id="aktuell"><a  href="bewohner.html">Bewohner</a></li>
+<li><a  href="webcam.html">Webcam</a></li>
+<li><a  href="config/config.php">Konfiguration</a></li>
+<!-- wird aktuell nicht ben�tigt
+<li><a  href="index4.html">Quartus</a></li>
+<li><a  href="index5.html">Quintus</a></li>
+<li><a  href="index6.html">Sextus</a></li>
+<li><a  href="index7.html">Septus</a></li>
+ -->
+</ul>
+</div>
+<!-- Men� ende  -->
+<!-- = = = = = nav bereich ende = = = = = -->
+</div>
+
+</div>
+</div>
+
+
+<!-- ############################################################ -->
+<!-- content bereich -->
+<!-- ############################################################ -->
+
+
+<div class="content-main">
+<div class="content">
+
+<!-- spalte 1 -->
+<div class="contentbox-1a">
+
+<h1>Bewohner</h1>
+Am 04/04/2018 sind die ersten 2 Bewohner eingezogen.
+<h2>Leghorn Tchek</h2>
+<!--  bild -->
+<div class="wrapper-bild">
+<img class="bild-1_of_1" src="../../chickenfarm/images/Leghorn_2018-04-16.jpg" width="500" height="334" border="0" alt="">
+<br>
+<i class="fa fa-caret-up drehen" ></i> Leghorn beim Erkunden.
+</div>
+<!--  bild ENDE-->
+<h2>Barnevelder</h2>
+<!--  bild -->
+<div class="wrapper-bild">
+<img class="bild-1_of_1" src="../../chickenfarm/images/Barneveldar_2018-04-16.jpg" width="500" height="334" border="0" alt="">
+<br>
+<i class="fa fa-caret-up drehen" ></i> Barnevelder beim Erkunden.<br>
+Sie hat am 5&6 April 2018 jeweils ein Ei gelegt und dann erst wieder am 23 April 2018.
+</div>
+<!--  bild ENDE-->
+
+<!--  Standort -->
+<h3>Standort</h3>
+<div id="map_markers_div" style="width: 100%; height: 100%"></div>
+</div>
+<!-- ende spalte 1 -->
+
+<!-- spalte 2 -->
+<div class="contentbox-1b">
+Hier erfahren sie einige Einzelheiten sowie Besonderheiten der Bewohner.
+<br>
+<h3>&Ouml;ffnungszeiten</h3>
+24h/7Tage
+<p>
+<br>
+<div id="InOutPie_3D" style="width: 100%; height: 100%;"></div>
+<br>
+<br>
+<!--
+<h3>Navigation 2nd</h3>
+<div class="menu2">
+<ul>
+<li><a href="index.html" >Link 01</a></li>
+<li><a href="index.html" >Link 02 </a></li>
+<li><a href="index.html" >Link 03 </a></li>
+<li><a href="index.html" >Weitere Links </a></li>
+<li><a href="index.html" >More</a></li>
+</ul>
+ -->
+
+<h3>Betriebsstundenzaehler</h3>
+<span><div id="runtime"></div></span>
+</div>
+<!-- ende spalte 2 -->
+</div>
+</div>
+<!-- ############################## content ENDE ############################## -->
+
+
+<!-- ############################################################ -->
+<!-- fusstop bereich -->
+<!-- ############################################################ -->
+
+<div class="fusstop-main">
+<div class="fusstop">
+
+
+<div class="fusstopbox-1a">
+<div class="icon-liste">
+
+<ul><!--
+<li><i class="fa fa-phone"></i>Phone: (0000) 0000000-50</li>
+<li><i class="fa fa-tablet"></i>Mobile : (+49) 0000-1234567</li>
+<li><i class="fa fa-fax"></i>Fax: (0000) 7654321-4141</li>
+ --></ul>
+
+</div>
+</div>
+
+<div class="fusstopbox-1b">
+</div>
+
+</div>
+</div>
+
+<!-- ############################## fusstop ENDE ############################## -->
+
+<!-- ############################################################ -->
+<!-- fuss bereich -->
+<!-- ############################################################ -->
+
+
+<div class="fuss-main">
+<div class="fuss">
+
+<div class="fussbox-1a ">
+<div class="fussmenu" >
+<ul>
+<li><a href="impressum.html">Impressum</a></li>
+<li><a href="datenschutz.html">Datenschutz</a></li>
+<li><a href="disclaimer.html">Disclaimer</a></li>
+</ul>
+</div>
+</div>
+
+<div class="fussbox-1b"><span class="fussname">&copy;2017 | Chickenfarm</span>
+
+</div>
+
+
+
+
+
+</div>
+</div>
+
+<!-- ############################## fuss ENDE ############################## -->
+
+
+
+<!-- ============================== ENDE HAUPTBEREICH  ============================== -->
+
+</div>
+<!-- ende wrapper-->
+</div>
+<!-- ende container-haupt-->
+
+</body>
+</html>
