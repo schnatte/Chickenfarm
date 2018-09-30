@@ -363,7 +363,7 @@ if (isset($_GET['Torauf'])){
 ?>
 <hr>
 <h2>Telegram</h2>
-Satus (0 = inactive | 1 = active)<br>
+Status (0 = inactive | 1 = active)<br>
 aktueller Status:
 <!--Read out File for cvs filename-->
 <?php
@@ -397,7 +397,7 @@ if(isset($_POST['TelegramStatusField'])){
 }
 ?>
 <h2>EMONCMS</h2>
-Satus (0 = inactive | 1 = active)<br>
+Status (0 = inactive | 1 = active)<br>
 aktueller Status:
 <!--Read out File for cvs filename-->
 <?php
