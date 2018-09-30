@@ -396,6 +396,40 @@ if(isset($_POST['TelegramStatusField'])){
 	echo "<p><font color='#008000'>Upload successful: " . $dir ."/". $datei_name ."</p>Wert $inhalt in Datei geschrieben</p></font></p>";
 }
 ?>
+<h2>EMONCMS</h2>
+Satus (0 = inactive | 1 = active)<br>
+aktueller Status:
+<!--Read out File for cvs filename-->
+<?php
+	$datei_inhalt = file_get_contents('IOTStatus.txt');
+	echo "$datei_inhalt";
+?>
+<br><br>
+Neuer Modus festlegen:<br>
+<!--Save new Value in file-->
+<form action="config.php" method="post">
+
+	<input type="radio" name="IOTStatusField" value="0"> inactive<br>
+  <input type="radio" name="IOTStatusField" value="1" checked="checked"> active<br>
+
+	<input type="submit" name="IOTStatusInput" value="Speichern"></p>
+</form>
+<?php
+//if the Variable $_POST ['form1'] was defined and the formulr sent the action will be done
+if(isset($_POST['IOTStatusField'])){
+	//Dateinamen festlegen
+	$datei_name = 'IOTStatus.txt';
+	//Inhalt
+	$inhalt = $_POST['IOTStatusField'];
+	//Datei wird zum schreiben geoeffnet
+	$fp = fopen ($datei_name, "w" );
+	//schreibe den Inhalt von Value
+	fwrite ( $fp, $_POST['IOTStatusField'] );
+	//Datei schliesen
+	fclose ( $fp );
+	echo "<p><font color='#008000'>Upload successful: " . $dir ."/". $datei_name ."</p>Wert $inhalt in Datei geschrieben</p></font></p>";
+}
+?>
 </div>
 
 <!-- ende spalte 1 -->
