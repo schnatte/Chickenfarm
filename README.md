@@ -11,6 +11,8 @@ The Blockdiagram of the wiring around the rapsberry pi.
 Calculations around the project
 <h3>Code</h3>
 My C-Code used to get it running
+<h3>HowTos</h3>
+Some explanations and memos
 <h3>Datsheets</h3>
 Different datasheets used for the components
 <h3>Images</h3>
@@ -21,3 +23,6 @@ Details of the wiring
 Different test code used during the development to check the functions
 <h3>Webseite</h3>
 The Website which is for status and configuration pourposes
+
+Thanks
+hjhj
