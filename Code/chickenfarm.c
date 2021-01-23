@@ -689,6 +689,11 @@ int main() {
 					digitalWrite(K2, 1);
 
 					strcpy(buffer_FIRST_LINE,"Tuer zu!");
+					//Save Door staus in file
+					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer zu");
+
+					STATE='C';//check only Door Status
+
 					if (giIOTActiveStatus == 1){
 						//send information to EmonCMS
 						strcpy(json, "{Tuer:0}");
@@ -696,8 +701,6 @@ int main() {
 						//Clear arrays to avoid overflow
 						memset(json, 0, sizeof(json));
 					}
-					//Save Door staus in file
-					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer zu");
 
 					if(digitalRead(DOOR_CLOSED) == 1){//Check end contact
 						if(giTelegramFlag == 1){
@@ -722,7 +725,6 @@ int main() {
 						}
 					}
 			}
-				STATE='C';//check only Door Status
 				break;
 				/*OLD Code
 				tDoorMove  = gNow; //start time measurement
@@ -794,6 +796,11 @@ int main() {
 					digitalWrite(K2, 1);
 
 					strcpy(buffer_FIRST_LINE,"Tuer auf!");
+					//Save Door staus in file
+					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer auf");
+
+					STATE='C';//check only Door Status
+
 					if (giIOTActiveStatus == 1){
 						//send information to EmonCMS
 						strcpy(json, "{Tuer:1}");
@@ -801,8 +808,6 @@ int main() {
 						//Clear arrays to avoid overflow
 						memset(json, 0, sizeof(json));
 					}
-					//Save Door staus in file
-					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer auf");
 
 					if(digitalRead(DOOR_OPEN) == 1){//Check end contact
 						if(giTelegramFlag == 1){
@@ -827,7 +832,6 @@ int main() {
 						}
 					}
 			}
-				STATE='C';//check only Door Status
 				break;
 				/*OLD Code
 				tDoorMove  = gNow; //start time measurement
