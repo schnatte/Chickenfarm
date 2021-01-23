@@ -102,19 +102,21 @@ void uploadtoEMONCMS(char *json);
 /***********************************************************/
 /*EmonCMS Account Information                              */
 /***********************************************************/
-int giIOTActiveStatus = 0; //Set EmonCMS active to send information
-int giIOTActiveStatus_old = 1;
-#define EmonCMS_HOST "emoncms.org"
-#define EmonCMS_NODE "ChickenFarm"
-#define EmonCMS_APIKey "4ee6b1214cc19d87f46910ba5e938295"
+volatile int giIOTActiveStatus = 0; //Set EmonCMS active to send information
+volatile int giIOTActiveStatus_old = 1;
+volatile int giUpdateSequence = 180;//emon update sequence in Seconds
+volatile int giUpdateSequence_old = 100;
 
+#define EmonCMS_HOST "192.168.0.119"
+#define EmonCMS_NODE "ChickenFarm"
+#define EmonCMS_APIKey "60ab9904683c455cd2230ac5a7aa0f60"
 
 /***********************************************************/
 /*Telegram Account                                         */
 /***********************************************************/
-int giTelegramActiveStatus = 0; //Set Telegram active to send messages
-int giTelegramActiveStatus_old = 1;
-int giTelegramFlag = 0; //Set Flag to 1 to send message otherwise reset to avoid continiously sending
+volatile int giTelegramActiveStatus = 0; //Set Telegram active to send messages
+volatile int giTelegramActiveStatus_old = 1;
+volatile int giTelegramFlag = 0; //Set Flag to 1 to send message otherwise reset to avoid continiously sending
 #define CHATID 475180895 //Chat ID Empfänger
 #define TOKEN "465754748:AAFg51b8EJSuCIeH3Tejiph76FzbMs1mcDA"
 
@@ -450,7 +452,7 @@ int main() {
 		/* - Door Modus (1 = active; 0 = inactive)                        */
 		/* - DOORMOVETIME (in ms)                                         */
 		/* - Telegram Status (1 = active; 0 = inactive)                   */
-		/* -                                                              */
+		/* - UpdateSequence (time in seconds)                             */
 		/* -                                                              */
 		/******************************************************************/
 		iTRESHOLD_LUX = ReadFileContentInt("/var/www/html/chickenfarm/config/LUXthreshold.txt");
@@ -461,6 +463,7 @@ int main() {
 		iDOORMOVETIME = ReadFileContentInt("/var/www/html/chickenfarm/config/DOORMOVETIME.txt");
 		giTelegramActiveStatus = ReadFileContentInt("/var/www/html/chickenfarm/config/TelegramStatus.txt");
 		giIOTActiveStatus = ReadFileContentInt("/var/www/html/chickenfarm/config/IOTStatus.txt");
+		giUpdateSequence = ReadFileContentInt("/var/www/html/chickenfarm/config/UpdateSequence.txt");
 		/******************************************************************/
 		/*Check if the file content has changes and send a Telegram*/
 		if(giTelegramActiveStatus){
@@ -521,8 +524,14 @@ int main() {
 				SendTelegramText(cText);
 				giIOTActiveStatus_old = giIOTActiveStatus;
 			}
+			/*UpdateSequence*/
+			if (giUpdateSequence != giUpdateSequence_old){
+				sprintf(cText, "%d", giUpdateSequence);
+				SendTelegramText("UpdateSequence geändert. Neuer Wert:");
+				SendTelegramText(cText);
+				giUpdateSequence_old = giUpdateSequence;
+			}
 		}
-
 		/******************************************************************/
 		/*Read Lux Value from Sensor and provide information to different strings*/
 		fLUX = MAX44009getLUX();//Read the Luminosity of MAX44009
@@ -616,12 +625,106 @@ int main() {
 		/*State for DOOR*/
 		switch(STATE){
 			/******************************************************************/
-			/*Check Interrupt Status and do something                         */
+			/*Statemachine for DOOR Status                                    */
 			/*case 'A'://STATE definition close DOOR                          */
 			/*case 'B'://STATE definition open DOOR                           */
 			/*case 'C'://check only Door Status                               */
 			/******************************************************************/
+			/*Endschalter sind unzuverlässig und Programm hängt im while.
+				Fehlermeldung kann zur Blockade der Tür führen. Ein Linearmotor
+				ist eine Zuverlässige Zwangsführung mit eingebauten Endschaltern
+				auf welche man aber keinen Zugriff hat.
+
+				Neue Idee:
+				Der Motor wird gestartet und eine Zeit läuft, das ist die normal benötigte
+				Wegezeit. Nach Ablauf der Zeit wird das Relais gestoppt.
+				Nach der Zeit werden die Endschalter abgefragt und kommuniziert (Kontrolle)
+				Der Manual Modus wird nie aktiviert.
+
+				tDoorMove  = gNow; //start time measurement
+				//Move Door START MOTOR (close)
+				digitalWrite(K1, 1);
+				digitalWrite(K2, 0);
+				time(&gNow);//init now time
+				tDoorMoveDifference = difftime(gNow, tDoorMove);//Check delta time in Seconds
+				if(tDoorMoveDifference >= iDOORMOVETIME){
+					//STOP MOTOR
+					digitalWrite(K1, 1);
+					digitalWrite(K2, 1);
+
+					if(digitalRead(DOOR_CLOSED) == 1){//Check end contact
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer zu! (Automatic)");
+							}
+							else{
+								printf("Tuer zu (Automatic)\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+					else{//end contact failure
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer zu! (Automatic) ALARM: Endschalter nicht erkannt");
+							}
+							else{
+								printf("Tuer zu (Automatic) ALARM: Endschalter nicht erkannt\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+			}
+			*/
 			case 'A'://STATE definition close DOOR
+				tDoorMove  = gNow; //start time measurement
+				//Move Door START MOTOR (close)
+				digitalWrite(K1, 1);
+				digitalWrite(K2, 0);
+				time(&gNow);//init now time
+				tDoorMoveDifference = difftime(gNow, tDoorMove);//Check delta time in Seconds
+				if(tDoorMoveDifference >= iDOORMOVETIME){
+					//STOP MOTOR
+					digitalWrite(K1, 1);
+					digitalWrite(K2, 1);
+
+					strcpy(buffer_FIRST_LINE,"Tuer zu!");
+					if (giIOTActiveStatus == 1){
+						//send information to EmonCMS
+						strcpy(json, "{Tuer:0}");
+						uploadtoEMONCMS(json);
+						//Clear arrays to avoid overflow
+						memset(json, 0, sizeof(json));
+					}
+					//Save Door staus in file
+					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer zu");
+
+					if(digitalRead(DOOR_CLOSED) == 1){//Check end contact
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer zu! (Automatic)");
+							}
+							else{
+								printf("Tuer zu (Automatic)\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+					else{//end contact failure
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer zu! (Automatic) ALARM: Endschalter nicht erkannt. Keine weitere Aktion eingeleitet.");
+							}
+							else{
+								printf("Tuer zu (Automatic) ALARM: Endschalter nicht erkannt. Keine weitere Aktion eingeleitet.\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+			}
+				STATE='C';//check only Door Status
+				break;
+				/*OLD Code
 				tDoorMove  = gNow; //start time measurement
 				while(digitalRead(DOOR_CLOSED) == 1){//Close Door till close contact is active
 					//Move Door start Motor (close)
@@ -677,8 +780,56 @@ int main() {
 					}
 				}
 				STATE='C';//check only Door Status
-				break;
+				OLD CODE END*/
 			case 'B'://STATE definition open DOOR
+				tDoorMove  = gNow; //start time measurement
+				//Move Door START MOTOR (open)
+				digitalWrite(K1, 0);
+				digitalWrite(K2, 1);
+				time(&gNow);//init now time
+				tDoorMoveDifference = difftime(gNow, tDoorMove);//Check delta time in Seconds
+				if(tDoorMoveDifference >= iDOORMOVETIME){
+					//STOP MOTOR
+					digitalWrite(K1, 1);
+					digitalWrite(K2, 1);
+
+					strcpy(buffer_FIRST_LINE,"Tuer auf!");
+					if (giIOTActiveStatus == 1){
+						//send information to EmonCMS
+						strcpy(json, "{Tuer:1}");
+						uploadtoEMONCMS(json);
+						//Clear arrays to avoid overflow
+						memset(json, 0, sizeof(json));
+					}
+					//Save Door staus in file
+					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer auf");
+
+					if(digitalRead(DOOR_OPEN) == 1){//Check end contact
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer auf! (Automatic)");
+							}
+							else{
+								printf("Tuer auf (Automatic)\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+					else{//end contact failure
+						if(giTelegramFlag == 1){
+							if(giTelegramActiveStatus){
+								SendTelegramText("Tuer auf! (Automatic) ALARM: Endschalter nicht erkannt. Keine weitere Aktion eingeleitet.");
+							}
+							else{
+								printf("Tuer auf (Automatic) ALARM: Endschalter nicht erkannt. Keine weitere Aktion eingeleitet.\n");
+							}
+						giTelegramFlag = 0; //Reset Flag
+						}
+					}
+			}
+				STATE='C';//check only Door Status
+				break;
+				/*OLD Code
 				tDoorMove  = gNow; //start time measurement
 				while(digitalRead(DOOR_OPEN) == 1){//Open Door till open contact is active
 					//Move Door start Motor (open)
@@ -732,9 +883,7 @@ int main() {
 						//Save Door staus in file
 						SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer auf");
 					}
-				}
-				STATE='C';//check only Door Status
-				break;
+				}OLD CODE END*/
 			case 'C'://check only Door Status
 				if(digitalRead(DOOR_OPEN) == 0){//When DOOR is open then
 					strcpy(buffer_FIRST_LINE,"Tuer auf!");
@@ -749,7 +898,6 @@ int main() {
 			default:
 				break;
 		}
-
 		//Check Power OFF and Switch OFF Booster and switch to 12V normal
 		if(giPOWER_ON_OFF == 1){//Alarm active
 		 	digitalWrite(K7, 1);//Switch to 12V normal
@@ -1340,10 +1488,10 @@ int main() {
 		memset(buffer_SECOND_LINE, 0, sizeof(buffer_SECOND_LINE));//write 2nd line
 		memset(buffer_THIRD_LINE, 0, sizeof(buffer_THIRD_LINE));//write 3rd line
 		memset(buffer_FOURTH_LINE, 0, sizeof(buffer_FOURTH_LINE));//write 4th line
-		/***************************************************************************************/
-		/* Check Timestamp and save every 1 min the information to the different storage files */
-		/***************************************************************************************/
-		if(gNow - timeold >= 60){
+		/******************************************************************************************/
+		/* Check Timestamp and save every x second the information to the different storage files */
+		/******************************************************************************************/
+		if(gNow - timeold >= giUpdateSequence){
 			timeold = gNow;
 			FILE *datei;
 			/*Running time claculation*/
@@ -1452,7 +1600,7 @@ int main() {
 			digitalWrite(K3, 1);//Switch off Blacklight Relais
 		}
 	}
-}
+}//MAIN END
 /************************************************************/
 /* GETIP						                          							*/
 /* Gets the IP from the device and write it to the LCD for  */
@@ -1850,7 +1998,7 @@ void uploadtoEMONCMS(char *json){
 	char   url[256];
 
 	// build URL string
-	strcpy(url, "https://");
+	strcpy(url, "http://");
 	strcat(url, EmonCMS_HOST);
 	strcat(url, "/input/post?node=");
 	strcat(url, EmonCMS_NODE);
