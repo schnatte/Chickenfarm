@@ -136,7 +136,7 @@ volatile int giButtonPushFlag = 0; //Button pushed Flag;  1 = Button pushed acti
 volatile int RMS = 300; //RMS Value over x measurement values
 volatile int x = 1;// help variable for RMS calculation
 
-volatine int giTimeFlag = 0; //Time counting. Active = 1
+volatile int giTimeFlag = 0; //Time counting. Active = 1
 
 time_t gNow; //Variable for actual time
 time_t gBacklightTime; //Variable to count Backlight time
@@ -699,7 +699,7 @@ int main() {
 
 					STATE='C';//check only Door Status
 					giTimeFlag = 0;//Reset time Flag
-					
+
 					if (giIOTActiveStatus == 1){
 						//send information to EmonCMS
 						strcpy(json, "{Tuer:0}");
