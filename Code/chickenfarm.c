@@ -136,6 +136,8 @@ volatile int giButtonPushFlag = 0; //Button pushed Flag;  1 = Button pushed acti
 volatile int RMS = 300; //RMS Value over x measurement values
 volatile int x = 1;// help variable for RMS calculation
 
+volatine int giTimeFlag = 0; //Time counting. Active = 1
+
 time_t gNow; //Variable for actual time
 time_t gBacklightTime; //Variable to count Backlight time
 time_t gPowerOFFTime; //Variable to count Power Off Time
@@ -677,7 +679,10 @@ int main() {
 			}
 			*/
 			case 'A'://STATE definition close DOOR
-				tDoorMove  = gNow; //start time measurement
+				if(giTimeFlag == 0){
+					tDoorMove  = gNow; //start time measurement
+					giTimeFlag = 1;//Set time Flag
+				}
 				//Move Door START MOTOR (close)
 				digitalWrite(K1, 1);
 				digitalWrite(K2, 0);
@@ -693,7 +698,8 @@ int main() {
 					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer zu");
 
 					STATE='C';//check only Door Status
-
+					giTimeFlag = 0;//Reset time Flag
+					
 					if (giIOTActiveStatus == 1){
 						//send information to EmonCMS
 						strcpy(json, "{Tuer:0}");
@@ -784,7 +790,10 @@ int main() {
 				STATE='C';//check only Door Status
 				OLD CODE END*/
 			case 'B'://STATE definition open DOOR
-				tDoorMove  = gNow; //start time measurement
+				if(giTimeFlag == 0){
+					tDoorMove  = gNow; //start time measurement
+					giTimeFlag = 1;//Set time Flag
+				}
 				//Move Door START MOTOR (open)
 				digitalWrite(K1, 0);
 				digitalWrite(K2, 1);
@@ -800,6 +809,7 @@ int main() {
 					SaveFileContentChar("/var/www/html/tmp/door.txt", "Tuer auf");
 
 					STATE='C';//check only Door Status
+					giTimeFlag = 0;//Reset time Flag
 
 					if (giIOTActiveStatus == 1){
 						//send information to EmonCMS
